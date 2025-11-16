@@ -2,24 +2,31 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+	"os"
 )
 
 func main() {
 
 	exibeIntroducao()
-	exibeMenu()
 
-	comando := lerComando()
+	for {
+		exibeMenu()
 
-	switch comando {
-	case 1:
-		fmt.Println("Iniciando monitoramento...")
-	case 2:
-		fmt.Println("Exibindo logs...")
-	case 0:
-		fmt.Println("Saindo do programa...")
-	default:
-		fmt.Println("Comando não reconhecido")
+		comando := lerComando()
+
+		switch comando {
+		case 1:
+			iniciarMonitoramento()
+		case 2:
+			fmt.Println("Exibindo logs...")
+		case 0:
+			fmt.Println("Saindo do programa...")
+			os.Exit(0)
+		default:
+			fmt.Println("Comando não reconhecido")
+			os.Exit(-1)
+		}
 	}
 }
 
@@ -40,4 +47,17 @@ func lerComando() int {
 	fmt.Println("Comando escolhido foi", comandoLido)
 
 	return comandoLido
+}
+
+func iniciarMonitoramento() {
+	fmt.Println("Iniciando monitoramento...")
+	site := "https://www.redbull.com/br-pt/tags/f1"
+	resp, _ := http.Get(site)
+
+	if resp.StatusCode == 200 {
+		fmt.Println("Site", site, "foi carregado com sucesso!")
+	} else {
+		fmt.Println("Site", site, "está com problemas. Status code:", resp.StatusCode)
+	}
+
 }
